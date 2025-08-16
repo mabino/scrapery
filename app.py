@@ -21,7 +21,7 @@ def screenshot():
 
     with PLAYWRIGHT_LOCK:
         with sync_playwright() as p:
-            browser = p.chromium.connect_over_cdp('http://localhost:9222')
+            browser = p.chromium.connect_over_cdp('http://localhost:9223')
             context = browser.contexts[0] if browser.contexts else browser.new_context()
             # If provided, load storage state
             if storage_state:

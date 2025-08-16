@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install lightweight window manager, VNC server and utilities
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-       fluxbox x11vnc xvfb dbus-x11 procps net-tools ca-certificates fonts-liberation \
+       fluxbox x11vnc xvfb dbus-x11 procps net-tools ca-certificates fonts-liberation socat \
     && rm -rf /var/lib/apt/lists/*
 
 # Create user
@@ -26,6 +26,7 @@ RUN apt-get update \
 
 COPY app.py /app/app.py
 COPY start.sh /app/start.sh
+COPY host_playwright_example.py /app/host_playwright_example.py
 RUN chmod +x /app/start.sh
 
 EXPOSE 5900 9222 3000
@@ -35,6 +36,6 @@ EXPOSE 6080
 ENV DISPLAY=:99
 ENV VNC_PASSWORD=scrapery
 ENV CHROMIUM_USER_DATA_DIR=/data/profile
-ENV CHROMIUM_EXTRA_ARGS="--no-sandbox --disable-dev-shm-usage --disable-gpu"
+ENV CHROMIUM_EXTRA_ARGS="--no-sandbox --disable-dev-shm-usage --disable-gpu --disable-setuid-sandbox --disable-dbus"
 
 CMD ["/app/start.sh"]

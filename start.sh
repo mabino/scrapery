@@ -65,8 +65,18 @@ else
   USER_DATA_ARG="--user-data-dir=/tmp/chrome-profile"
 fi
 
-eval "$CHROME_BIN --no-first-run --remote-debugging-address=0.0.0.0 --remote-debugging-port=9222 $CHROMIUM_EXTRA_ARGS $USER_DATA_ARG" &
+"$CHROME_BIN" \
+  --no-first-run \
+  --remote-debugging-port=9223 \
+  --remote-allow-origins=* \
+  $CHROMIUM_EXTRA_ARGS \
+  $USER_DATA_ARG &
 CHROME_PID=$!
+
+# Use socat to proxy Chrome's debugging port from localhost:9223 to 0.0.0.0:9222
+# This works around Chrome ignoring --remote-debugging-address=0.0.0.0
+socat TCP-LISTEN:9222,bind=0.0.0.0,fork TCP:localhost:9223 &
+SOCAT_PID=$!
 
 # Start Flask control API
 python3 /app/app.py &
@@ -76,5 +86,6 @@ wait $API_PID
 
 # Cleanup
 kill $CHROME_PID || true
+kill $SOCAT_PID || true
 kill $VNC_PID || true
 kill $XVFB_PID || true

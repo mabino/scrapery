@@ -75,6 +75,7 @@ Notes, caveats and next steps
 - Mounting a live host browser profile may result in permission or version mismatches. If you see problems, copy the profile into `./data/profile` or use the `session.json` approach.
 - The container exposes Chromium remote debugging on port 9222 without auth; for production or remote exposure, use SSH tunneling or a secured proxy.
 - noVNC is bundled at runtime and served on port 6080 so you can access the desktop from a browser — this eliminates the need for a separate VNC client.
+- **Technical note**: Chrome runs on internal port 9223, with `socat` proxying connections from `0.0.0.0:9222` to `localhost:9223`. This works around Chrome ignoring the `--remote-debugging-address=0.0.0.0` flag in containerized environments.
 
 Future features:
 

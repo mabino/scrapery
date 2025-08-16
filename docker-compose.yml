@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  scrapery:
+    build: .
+    image: scrapery:latest
+    platform: linux/arm64
+    ports:
+      - "5900:5900" # VNC
+      - "9222:9222" # Chromium remote debugging
+      - "3000:3000" # Control API
+    volumes:
+      - ./data/profile:/data/profile:rw # mount a Chromium profile directory from host
+      # Optionally create ./data/session.json to provide Playwright storageState:
+      # - ./data/session.json:/data/session.json:rw
+    environment:
+      VNC_PASSWORD: "scrapery"
+      CHROMIUM_USER_DATA_DIR: "/data/profile"
+      PLAYWRIGHT_STORAGE_STATE: "/data/session.json"
+    shm_size: '1gb'
+    restart: unless-stopped

@@ -23,6 +23,16 @@ fi
 x11vnc -forever -shared -rfbauth /tmp/vnc_passwd -display ${DISPLAY} -rfbport 5900 &
 VNC_PID=$!
 
+# Start websockify / noVNC so the desktop is accessible from a browser
+if [ ! -d /opt/novnc ]; then
+  mkdir -p /opt/novnc
+  echo "Downloading noVNC..."
+  git clone --depth 1 https://github.com/novnc/noVNC.git /opt/novnc || true
+  git clone --depth 1 https://github.com/novnc/websockify.git /opt/novnc/utils/websockify || true
+fi
+/opt/novnc/utils/websockify/run 6080 --web /opt/novnc localhost:5900 || true &
+WS_PID=$!
+
 # Determine chromium binary
 CHROME_BIN=""
 for candidate in chromium chromium-browser google-chrome-stable google-chrome; do

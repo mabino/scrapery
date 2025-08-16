@@ -19,6 +19,7 @@ COPY requirements.txt /app/requirements.txt
 # Ensure python3 and pip are available for our Flask + Playwright Python usage
 RUN apt-get update \
     && apt-get install -y --no-install-recommends python3 python3-pip \
+    && apt-get install -y --no-install-recommends git python3-websockify ca-certificates wget \
     && python3 -m pip install --upgrade pip setuptools \
     && python3 -m pip install --no-cache-dir -r /app/requirements.txt \
     && python3 -m playwright install --with-deps || true
@@ -28,6 +29,7 @@ COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
 EXPOSE 5900 9222 3000
+EXPOSE 6080
 
 # Defaults: allow mounting a host profile to /data/profile or providing a Playwright storageState at /data/session.json
 ENV DISPLAY=:99

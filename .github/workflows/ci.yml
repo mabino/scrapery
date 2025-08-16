@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build image
+        run: |
+          docker build --progress=plain -t scrapery:ci .
+
+      - name: Run container
+        run: |
+          docker run -d --name scrapery_ci -p 5900:5900 -p 9222:9222 -p 3000:3000 -p 6080:6080 scrapery:ci
+
+      - name: Wait for service
+        run: |
+          for i in {1..30}; do
+            if curl -sS http://127.0.0.1:3000/status >/dev/null 2>&1; then
+              echo OK && break
+            fi
+            sleep 2
+          done
+
+      - name: Screenshot test
+        run: |
+          curl -sS -X POST http://127.0.0.1:3000/screenshot -H 'Content-Type: application/json' -d '{"url":"https://example.com"}' | jq
+
+      - name: Tear down
+        if: always()
+        run: |
+          docker rm -f scrapery_ci || true

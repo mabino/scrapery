@@ -6,6 +6,7 @@ services:
     image: scrapery:latest
     platform: linux/arm64
     ports:
+      - "6080:6080" # noVNC
       - "5900:5900" # VNC
       - "9222:9222" # Chromium remote debugging
       - "3000:3000" # Control API

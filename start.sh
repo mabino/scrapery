@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+mkdir -p /data/profile
+
 # Start dbus
 export DISPLAY=${DISPLAY:-:0}
 

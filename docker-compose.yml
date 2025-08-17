@@ -17,3 +17,4 @@ services:
       PLAYWRIGHT_STORAGE_STATE: "/data/session.json"
     shm_size: '1gb'
     restart: unless-stopped
+

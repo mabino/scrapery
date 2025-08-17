@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:latest
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/playwright:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 

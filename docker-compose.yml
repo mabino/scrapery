@@ -13,6 +13,8 @@ services:
       # - ./data/session.json:/data/session.json:rw
     environment:
       VNC_PASSWORD: "scrapery"
+      # Set to "true" to disable VNC password requirement
+      # VNC_NO_PASSWORD: "true"
       CHROMIUM_USER_DATA_DIR: "/data/profile"
       PLAYWRIGHT_STORAGE_STATE: "/data/session.json"
     shm_size: '1gb'

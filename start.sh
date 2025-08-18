@@ -14,15 +14,21 @@ XVFB_PID=$!
 # Start fluxbox window manager
 fluxbox &
 
-# Start x11vnc with password from env (simple default)
-if [ -z "$VNC_PASSWORD" ]; then
-  VNC_PASSWORD="scrapery"
+# Start x11vnc, with or without a password
+if [ "${VNC_NO_PASSWORD,,}" == "true" ]; then
+  echo "Starting VNC without password."
+  x11vnc -forever -shared -display ${DISPLAY} -rfbport 5900 &
+else
+  echo "Starting VNC with password."
+  if [ -z "$VNC_PASSWORD" ]; then
+    VNC_PASSWORD="scrapery"
+  fi
+  PASSWD_PATH=/tmp/vnc_passwd
+  if [ ! -f "$PASSWD_PATH" ]; then
+    x11vnc -storepasswd "$VNC_PASSWORD" "$PASSWD_PATH"
+  fi
+  x11vnc -forever -shared -rfbauth $PASSWD_PATH -display ${DISPLAY} -rfbport 5900 &
 fi
-mkdir -p /tmp
-if [ ! -f /tmp/vnc_passwd ]; then
-  x11vnc -storepasswd "$VNC_PASSWORD" /tmp/vnc_passwd
-fi
-x11vnc -forever -shared -rfbauth /tmp/vnc_passwd -display ${DISPLAY} -rfbport 5900 &
 VNC_PID=$!
 
 # Start websockify / noVNC so the desktop is accessible from a browser
